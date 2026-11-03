@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+    <constant name="struts.devMode" value="true"/>
+    <constant name="struts.i18n.encoding" value="UTF-8"/>
+    <!-- 页面用 simple 主题，便于自定义布局 -->
+    <constant name="struts.ui.theme" value="simple"/>
+
+    <package name="tea" namespace="/" extends="struts-default">
+
+        <!-- ===== 菜单管理 ===== -->
+        <action name="menu" class="com.tea.web.MenuAction">
+            <result>/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-saveCategory" class="com.tea.web.MenuAction" method="saveCategory">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-deleteCategory" class="com.tea.web.MenuAction" method="deleteCategory">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-saveProduct" class="com.tea.web.MenuAction" method="saveProduct">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-deleteProduct" class="com.tea.web.MenuAction" method="deleteProduct">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-saveSpec" class="com.tea.web.MenuAction" method="saveSpec">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+        <action name="menu-deleteSpec" class="com.tea.web.MenuAction" method="deleteSpec">
+            <result name="success" type="redirectAction">menu</result>
+            <result name="input">/WEB-INF/jsp/menu.jsp</result>
+        </action>
+
+        <!-- ===== 点单下单 ===== -->
+        <action name="order" class="com.tea.web.OrderAction">
+            <result>/WEB-INF/jsp/order.jsp</result>
+        </action>
+        <action name="order-create" class="com.tea.web.OrderAction" method="create"/>
+        <action name="orders" class="com.tea.web.OrderAction" method="list">
+            <result>/WEB-INF/jsp/orders.jsp</result>
+            <result name="input">/WEB-INF/jsp/orders.jsp</result>
+        </action>
+        <action name="order-pay" class="com.tea.web.OrderAction" method="pay">
+            <result name="success" type="redirectAction">orders</result>
+            <result name="input" type="redirectAction">orders</result>
+        </action>
+        <action name="order-complete" class="com.tea.web.OrderAction" method="complete">
+            <result name="success" type="redirectAction">orders</result>
+            <result name="input" type="redirectAction">orders</result>
+        </action>
+        <action name="order-cancel" class="com.tea.web.OrderAction" method="cancel">
+            <result name="success" type="redirectAction">orders</result>
+            <result name="input" type="redirectAction">orders</result>
+        </action>
+
+        <!-- ===== 会员积分 ===== -->
+        <action name="member" class="com.tea.web.MemberAction">
+            <result>/WEB-INF/jsp/member.jsp</result>
+        </action>
+        <action name="member-save" class="com.tea.web.MemberAction" method="save">
+            <result name="success" type="redirectAction">member</result>
+            <result name="input">/WEB-INF/jsp/member.jsp</result>
+        </action>
+        <action name="member-redeem" class="com.tea.web.MemberAction" method="redeem">
+            <result name="success" type="redirectAction">member</result>
+            <result name="input">/WEB-INF/jsp/member.jsp</result>
+        </action>
+
+        <!-- ===== 库存管理 ===== -->
+        <action name="stock" class="com.tea.web.StockAction">
+            <result>/WEB-INF/jsp/stock.jsp</result>
+        </action>
+        <action name="stock-save" class="com.tea.web.StockAction" method="save">
+            <result name="success" type="redirectAction">stock</result>
+            <result name="input">/WEB-INF/jsp/stock.jsp</result>
+        </action>
+        <action name="stock-restock" class="com.tea.web.StockAction" method="restock">
+            <result name="success" type="redirectAction">stock</result>
+            <result name="input">/WEB-INF/jsp/stock.jsp</result>
+        </action>
+    </package>
+</struts>
