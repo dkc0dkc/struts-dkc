@@ -32,6 +32,10 @@ public class OrderAction extends ActionSupport {
     private Long id;
     private Long ruleId;
     private String status;
+    private String from;            // "my" 表示来自用户侧页面
+    private String payMethod;       // 支付方式（模拟，页面展示用）
+    private Order order;            // 支付页展示的订单
+    private Member orderMember;     // 订单所属会员（积分抵扣校验用）
 
     /** 点单页。 */
     public String execute() {
@@ -63,6 +67,9 @@ public class OrderAction extends ActionSupport {
             if (root.hasNonNull("memberId") && root.get("memberId").asLong(0) > 0) {
                 memberId = root.get("memberId").asInt();
             }
+            // 已登录用户：下单一律归属当前登录会员，防止代下单到他人账户
+            Long loginId = LoginAction.loginMemberId();
+            if (loginId != null) memberId = loginId.intValue();
             List<OrderService.Line> lines = new ArrayList<>();
             JsonNode items = root.get("items");
             if (items == null || !items.isArray() || items.size() == 0) {
@@ -98,14 +105,42 @@ public class OrderAction extends ActionSupport {
         return SUCCESS;
     }
 
-    public String pay() {
+    /** 支付页：订单详情 + 积分抵扣券 + 支付方式（模拟）。 */
+    public String payPage() {
         try {
+            if (id == null || id <= 0) throw new IllegalArgumentException("缺少订单参数");
+            order = OrderService.get(id);
+            if (order == null) throw new IllegalArgumentException("订单不存在");
+            rules = MemberService.rules();
+            if (order.getMemberId() > 0) orderMember = MemberService.getById(order.getMemberId());
+        } catch (Exception e) {
+            addActionError(e.getMessage() == null ? e.toString() : e.getMessage());
+        }
+        return SUCCESS;
+    }
+
+    /** 我的订单（用户视角，仅看自己名下订单）。 */
+    public String myOrders() {
+        Long mid = LoginAction.loginMemberId();
+        if (mid == null) return "needLogin";
+        try {
+            orders = OrderService.list(null, mid);
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+        }
+        return SUCCESS;
+    }
+
+    public String pay() {
+        boolean userFlow = "my".equals(from);
+        try {
+            if (id == null || id <= 0) throw new IllegalArgumentException("缺少订单参数");
             OrderService.pay(id, ruleId);
         } catch (Exception e) {
             ServletActionContext.getRequest().getSession()
-                    .setAttribute("flashError", "支付失败: " + e.getMessage());
+                    .setAttribute("flashError", "支付失败: " + (e.getMessage() == null ? e.toString() : e.getMessage()));
         }
-        return SUCCESS;
+        return userFlow ? "user" : SUCCESS;
     }
 
     public String complete() {
@@ -119,13 +154,14 @@ public class OrderAction extends ActionSupport {
     }
 
     public String cancel() {
+        boolean userFlow = "my".equals(from);
         try {
             OrderService.cancel(id);
         } catch (Exception e) {
             ServletActionContext.getRequest().getSession()
                     .setAttribute("flashError", "取消失败: " + e.getMessage());
         }
-        return SUCCESS;
+        return userFlow ? "user" : SUCCESS;
     }
 
     // ===== getter / setter =====
@@ -139,4 +175,10 @@ public class OrderAction extends ActionSupport {
     public void setRuleId(Long ruleId) { this.ruleId = ruleId; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getFrom() { return from; }
+    public void setFrom(String from) { this.from = from; }
+    public String getPayMethod() { return payMethod; }
+    public void setPayMethod(String payMethod) { this.payMethod = payMethod; }
+    public Order getOrder() { return order; }
+    public Member getOrderMember() { return orderMember; }
 }

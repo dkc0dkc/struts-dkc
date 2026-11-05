@@ -72,6 +72,19 @@ a { color: var(--brown); }
   font-weight: bold;
   color: #fff;
 }
+.nav-user { display: flex; align-items: center; gap: 10px; }
+.nav-user .nav-hi { color: #f5e9dc; font-size: 13px; }
+.nav-user a {
+  color: #f5e9dc;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, .4);
+  border-radius: 18px;
+  transition: background .2s;
+}
+.nav-user a:hover { background: rgba(255, 255, 255, .12); }
+.nav-user .nav-login { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* ========== 横幅 ========== */
 .hero {
@@ -403,6 +416,52 @@ form.inline { display: inline; }
 .adjust-form select { width: 78px; }
 .admin-table .form-row { gap: 6px; }
 
+/* ========== 登录 / 注册 ========== */
+.auth-wrap { max-width: 430px; margin: 36px auto 20px; }
+.auth-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.auth-tabs { display: flex; }
+.auth-tabs button {
+  flex: 1;
+  border-radius: 0;
+  background: #f3ead9;
+  color: var(--brown-dark);
+  padding: 12px;
+  font-size: 15px;
+}
+.auth-tabs button.on { background: var(--card); font-weight: bold; border-bottom: 3px solid var(--accent); }
+.auth-body { padding: 22px; }
+.auth-body .form-grid { margin-top: 4px; }
+.auth-note { font-size: 12px; color: #a3907c; margin-top: 14px; text-align: center; }
+
+/* ========== 支付页 ========== */
+.pay-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.pay-summary .spec-line { justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.pay-summary .spec-line:last-child { border-bottom: none; }
+.pay-amount { font-size: 26px; font-weight: bold; color: var(--red); }
+.pay-options { display: grid; gap: 10px; margin: 10px 0 16px; }
+.pay-options label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  font-size: 14px;
+}
+.pay-options label:hover { border-color: var(--brown-light); background: #fdf9f3; }
+.pay-options input { accent-color: var(--brown); }
+.pay-method-tag { font-weight: bold; color: var(--brown-dark); }
+.coupon-line { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.coupon-line .field-label { margin-bottom: 0; }
+
 /* ========== 空状态 ========== */
 .empty {
   text-align: center;
@@ -426,6 +485,10 @@ form.inline { display: inline; }
 /* ========== 响应式 ========== */
 @media (max-width: 1180px) {
   .shop { grid-template-columns: 150px minmax(0, 1fr) 300px; gap: 16px; }
+}
+@media (max-width: 980px) {
+  .nav-user { margin-left: auto; }
+  .pay-layout { grid-template-columns: minmax(0, 1fr) !important; }
 }
 @media (max-width: 980px) {
   .shop { grid-template-columns: minmax(0, 1fr); }

@@ -29,6 +29,12 @@ CREATE TABLE IF NOT EXISTS member (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 会员登录密码（SHA-256 加盐哈希，格式 tea:明文）。
+-- 兼容旧库：每次启动自动补列，并把未设置密码的会员重置为演示密码 123456。
+ALTER TABLE member ADD COLUMN IF NOT EXISTS password VARCHAR(100);
+UPDATE member SET password='5ab7dbc1a1509f4f7b7799ff15b9b080be628ef488c063f716cbc97aec4f6073'
+ WHERE password IS NULL OR password='';
+
 CREATE TABLE IF NOT EXISTS orders (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     order_no   VARCHAR(32) NOT NULL UNIQUE,

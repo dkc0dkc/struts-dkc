@@ -43,6 +43,13 @@
         <action name="order" class="com.tea.web.OrderAction">
             <result>/WEB-INF/jsp/order.jsp</result>
         </action>
+        <action name="pay" class="com.tea.web.OrderAction" method="payPage">
+            <result>/WEB-INF/jsp/pay.jsp</result>
+        </action>
+        <action name="my-orders" class="com.tea.web.OrderAction" method="myOrders">
+            <result>/WEB-INF/jsp/my-orders.jsp</result>
+            <result name="needLogin" type="redirectAction">login</result>
+        </action>
         <action name="order-create" class="com.tea.web.OrderAction" method="create"/>
         <action name="orders" class="com.tea.web.OrderAction" method="list">
             <result>/WEB-INF/jsp/orders.jsp</result>
@@ -50,6 +57,7 @@
         </action>
         <action name="order-pay" class="com.tea.web.OrderAction" method="pay">
             <result name="success" type="redirectAction">orders</result>
+            <result name="user" type="redirectAction">my-orders</result>
             <result name="input" type="redirectAction">orders</result>
         </action>
         <action name="order-complete" class="com.tea.web.OrderAction" method="complete">
@@ -58,7 +66,24 @@
         </action>
         <action name="order-cancel" class="com.tea.web.OrderAction" method="cancel">
             <result name="success" type="redirectAction">orders</result>
+            <result name="user" type="redirectAction">my-orders</result>
             <result name="input" type="redirectAction">orders</result>
+        </action>
+
+        <!-- ===== 会员登录注册 ===== -->
+        <action name="login" class="com.tea.web.LoginAction">
+            <result>/WEB-INF/jsp/login.jsp</result>
+        </action>
+        <action name="login-do" class="com.tea.web.LoginAction" method="doLogin">
+            <result name="success" type="redirectAction">order</result>
+            <result name="input">/WEB-INF/jsp/login.jsp</result>
+        </action>
+        <action name="register-do" class="com.tea.web.LoginAction" method="doRegister">
+            <result name="success" type="redirectAction">order</result>
+            <result name="input">/WEB-INF/jsp/login.jsp</result>
+        </action>
+        <action name="logout" class="com.tea.web.LoginAction" method="logout">
+            <result name="success" type="redirectAction">order</result>
         </action>
 
         <!-- ===== 会员积分 ===== -->

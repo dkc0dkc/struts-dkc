@@ -51,6 +51,70 @@ public class MemberService {
         }
     }
 
+    // ===== 会员注册 / 登录 =====
+
+    /** SHA-256 加盐哈希（盐固定为 tea: 前缀，演示项目够用）。 */
+    private static String hash(String password) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] d = md.digest(("tea:" + password).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder(d.length * 2);
+            for (byte b : d) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /** 注册新会员（注册即开通积分账户，初始 0 积分）。 */
+    public static long register(String name, String phone, String password) throws SQLException {
+        if (name == null || name.trim().isEmpty()) throw new IllegalArgumentException("请填写姓名");
+        if (phone == null || !phone.trim().matches("\\d{6,20}")) throw new IllegalArgumentException("手机号不合法");
+        if (password == null || password.length() < 6) throw new IllegalArgumentException("密码至少 6 位");
+        if (exists(null, phone.trim())) throw new IllegalArgumentException("该手机号已注册，请直接登录");
+        try (Connection c = DB.get();
+             PreparedStatement ps = c.prepareStatement(
+                     "INSERT INTO member(name, phone, password) VALUES (?,?,?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, name.trim());
+            ps.setString(2, phone.trim());
+            ps.setString(3, hash(password));
+            ps.executeUpdate();
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                keys.next();
+                return keys.getLong(1);
+            }
+        }
+    }
+
+    /** 登录校验，成功返回会员，失败返回 null。 */
+    public static Member login(String phone, String password) throws SQLException {
+        if (phone == null || phone.trim().isEmpty() || password == null || password.isEmpty()) return null;
+        try (Connection c = DB.get();
+             PreparedStatement ps = c.prepareStatement(
+                     "SELECT id, name, phone, points, password FROM member WHERE phone=?")) {
+            ps.setString(1, phone.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) return null;
+                String stored = rs.getString(5);
+                if (stored == null || !stored.equals(hash(password))) return null;
+                Member m = new Member(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getInt(4));
+                return m;
+            }
+        }
+    }
+
+    /** 按ID查询会员（登录态展示用）。 */
+    public static Member getById(long id) throws SQLException {
+        try (Connection c = DB.get();
+             PreparedStatement ps = c.prepareStatement("SELECT id, name, phone, points FROM member WHERE id=?")) {
+            ps.setLong(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? new Member(rs.getLong(1), rs.getString(2), rs.getString(3), rs.getInt(4)) : null;
+            }
+        }
+    }
+
     private static boolean exists(Integer excludeId, String phone) throws SQLException {
         String sql = "SELECT COUNT(*) FROM member WHERE phone=?" + (excludeId == null ? "" : " AND id<>?");
         try (Connection c = DB.get(); PreparedStatement ps = c.prepareStatement(sql)) {

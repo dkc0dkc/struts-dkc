@@ -239,12 +239,33 @@ public class OrderService {
         }
     }
 
-    /** 订单列表（含明细与会员名）。 */
+    /** 订单列表（含明细与会员名），可按状态过滤。 */
     public static List<Order> list(String status) throws SQLException {
+        return list(status, null);
+    }
+
+    /** 订单列表（含明细与会员名），可按状态与会员过滤。 */
+    public static List<Order> list(String status, Long memberId) throws SQLException {
+        java.util.List<String> conds = new ArrayList<>();
+        if (status != null && !status.isEmpty()) conds.add("o.status='" + status + "'");
+        if (memberId != null) conds.add("o.member_id=" + memberId);
+        return queryOrders(conds.toArray(new String[0]));
+    }
+
+    /** 按ID查询订单（含明细），不存在返回 null。 */
+    public static Order get(long id) throws SQLException {
+        List<Order> l = queryOrders("o.id=" + id);
+        return l.isEmpty() ? null : l.get(0);
+    }
+
+    /** 通用订单查询：按条件过滤，附带明细与会员名。 */
+    private static List<Order> queryOrders(String... conds) throws SQLException {
         StringBuilder sql = new StringBuilder(
                 "SELECT o.id, o.order_no, o.member_id, m.name, o.amount, o.pay_amount, o.status, o.created_at, o.paid_at " +
                 "FROM orders o LEFT JOIN member m ON m.id=o.member_id");
-        if (status != null && !status.isEmpty()) sql.append(" WHERE o.status='").append(status).append("'");
+        java.util.List<String> valid = new ArrayList<>();
+        for (String cnd : conds) if (cnd != null && !cnd.isEmpty()) valid.add(cnd);
+        if (!valid.isEmpty()) sql.append(" WHERE ").append(String.join(" AND ", valid));
         sql.append(" ORDER BY o.id DESC LIMIT 100");
         List<Order> list = new ArrayList<>();
         try (Connection c = DB.get(); Statement st = c.createStatement();

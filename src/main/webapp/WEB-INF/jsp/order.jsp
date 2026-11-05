@@ -95,15 +95,27 @@
                 <tr><td colspan="3" class="empty">尚未选择饮品</td></tr>
                 </tbody>
             </table>
-            <div class="row">会员：
-                <select id="memberId" style="width:100%">
-                    <option value="">非会员</option>
-                    <s:iterator value="members">
-                        <option value="<s:property value='id'/>">
-                            <s:property value="name"/>（<s:property value="phone"/>，<s:property value="points"/>积分）
-                        </option>
-                    </s:iterator>
-                </select>
+            <div class="row">
+                <s:if test="#session.loginMemberId != null">
+                    会员：<b><s:property value="#session.loginMemberName"/></b>
+                    <span class="spec">（已登录，消费自动累计积分）</span>
+                    <input type="hidden" id="memberId"
+                           value="<s:property value='#session.loginMemberId'/>"/>
+                </s:if>
+                <s:else>
+                    会员：
+                    <select id="memberId" style="width:100%">
+                        <option value="">非会员</option>
+                        <s:iterator value="members">
+                            <option value="<s:property value='id'/>">
+                                <s:property value="name"/>（<s:property value="phone"/>，<s:property value="points"/>积分）
+                            </option>
+                        </s:iterator>
+                    </select>
+                    <div class="spec" style="margin-top:4px">
+                        <a href="login.action">登录 / 注册</a> 后下单可累计积分、使用抵扣券
+                    </div>
+                </s:else>
             </div>
             <div class="row">合计：<span class="total" id="total">0.00</span> 元</div>
             <button type="button" style="width:100%; margin-top:6px;" onclick="submitOrder()">提交订单</button>
@@ -167,10 +179,9 @@
             body: JSON.stringify({ memberId: memberId, items: items })
         }).then(function (r) { return r.json(); }).then(function (data) {
             if (data.ok) {
-                var msg = '下单成功！订单ID: ' + data.orderId;
-                if (data.warnings && data.warnings.length) msg += '\n\n' + data.warnings.join('\n');
-                alert(msg);
-                location.reload();
+                if (data.warnings && data.warnings.length) alert(data.warnings.join('\n'));
+                // 下单成功 → 进入支付页
+                location.href = '${pageContext.request.contextPath}/pay.action?orderId=' + data.orderId;
             } else {
                 alert('下单失败: ' + (data.message || '未知错误'));
             }

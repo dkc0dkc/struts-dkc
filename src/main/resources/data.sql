@@ -16,9 +16,10 @@ INSERT INTO product_spec(product_id,spec_name,price) VALUES
  (4,'标准',8.00),
  (5,'标准',9.00);
 
-INSERT INTO member(name,phone,points) VALUES
- ('张三','13800000001',520),
- ('李四','13900000002',80);
+-- 演示会员，登录密码均为 123456（SHA-256 加盐哈希）
+INSERT INTO member(name,phone,points,password) VALUES
+ ('张三','13800000001',520,'5ab7dbc1a1509f4f7b7799ff15b9b080be628ef488c063f716cbc97aec4f6073'),
+ ('李四','13900000002',80,'5ab7dbc1a1509f4f7b7799ff15b9b080be628ef488c063f716cbc97aec4f6073');
 
 -- 每款饮品绑定原料库存：每卖 1 杯，各扣 1 份
 INSERT INTO stock(product_id,name,unit,quantity,threshold) VALUES
