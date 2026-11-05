@@ -16,6 +16,7 @@ public class Order {
     private String status;
     private Timestamp createdAt;
     private Timestamp paidAt;
+    private boolean reviewed;
     private List<OrderItem> items = new ArrayList<>();
 
     public long getId() { return id; }
@@ -36,6 +37,8 @@ public class Order {
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
     public Timestamp getPaidAt() { return paidAt; }
     public void setPaidAt(Timestamp paidAt) { this.paidAt = paidAt; }
+    public boolean isReviewed() { return reviewed; }
+    public void setReviewed(boolean reviewed) { this.reviewed = reviewed; }
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }
 }

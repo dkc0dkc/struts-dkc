@@ -304,6 +304,15 @@ public class OrderService {
                     }
                 }
             }
+            // 是否已评价
+            try (Connection c = DB.get(); PreparedStatement ps = c.prepareStatement(
+                    "SELECT COUNT(*) FROM review WHERE order_id=?")) {
+                ps.setLong(1, o.getId());
+                try (ResultSet rs = ps.executeQuery()) {
+                    rs.next();
+                    o.setReviewed(rs.getInt(1) > 0);
+                }
+            }
         }
         return list;
     }

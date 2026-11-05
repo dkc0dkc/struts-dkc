@@ -57,7 +57,7 @@ a { color: var(--brown); }
 }
 .brand b { font-size: 17px; letter-spacing: 2px; }
 .brand small { font-size: 11px; opacity: .75; display: block; letter-spacing: 3px; }
-.nav-links { display: flex; flex-wrap: wrap; gap: 4px; margin-left: auto; }
+.nav-links { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 12px; }
 .nav-links a {
   color: #f5e9dc;
   text-decoration: none;
@@ -72,7 +72,16 @@ a { color: var(--brown); }
   font-weight: bold;
   color: #fff;
 }
-.nav-user { display: flex; align-items: center; gap: 10px; }
+.nav-group-label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: rgba(245, 233, 220, .55);
+  margin-right: 2px;
+  align-self: center;
+}
+.nav-group-admin { border-left: 1px solid rgba(255, 255, 255, .18); padding-left: 12px; }
+.nav-user { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.nav-user .nav-hi { color: #f5e9dc; text-decoration: none; font-size: 13px; }
 .nav-user .nav-hi { color: #f5e9dc; font-size: 13px; }
 .nav-user a {
   color: #f5e9dc;
@@ -462,6 +471,54 @@ form.inline { display: inline; }
 .coupon-line { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
 .coupon-line .field-label { margin-bottom: 0; }
 
+/* ========== 个人中心 ========== */
+.profile-grid { display: grid; grid-template-columns: minmax(280px, 1.2fr) minmax(240px, 1fr); gap: 16px; margin-bottom: 8px; }
+.member-card {
+  background: linear-gradient(135deg, var(--brown), var(--brown-dark));
+  color: #f5e9dc;
+  border: none;
+  padding: 20px;
+}
+.member-card-top { display: flex; align-items: center; gap: 14px; }
+.member-card .avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #d9b08c, var(--accent));
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+}
+.member-card .m-name { font-size: 18px; font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; }
+.member-card .spec { color: #dccdb8; }
+.member-badge { margin-left: 2px; }
+.m-level {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  display: flex; align-items: center; gap: 12px;
+}
+.m-level .level-name { font-size: 15px; font-weight: bold; color: #ffd9a0; }
+.member-card .total { color: #ffd9a0; }
+.m-hint { margin-top: 10px; font-size: 12px; color: #cbb9a6; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-content: start; }
+.stat-card { text-align: center; padding: 18px 8px; }
+.stat-num { font-size: 26px; font-weight: bold; color: var(--brown-dark); }
+.stat-card .spec { margin-top: 4px; }
+
+/* ========== 评价 ========== */
+.star-input { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 4px; }
+.star-input input { display: none; }
+.star-input label { font-size: 30px; color: #d8c8b4; cursor: pointer; transition: color .15s; }
+.star-input label:hover, .star-input label:hover ~ label,
+.star-input input:checked ~ label { color: #f5a623; }
+
+.stars { color: #f5a623; font-size: 15px; letter-spacing: 1px; }
+.review-item { padding: 12px 16px; }
+.review-head { display: flex; align-items: center; gap: 10px; }
+.review-content { margin-top: 8px; color: #5c4632; font-size: 14px; line-height: 1.6; }
+
 /* ========== 空状态 ========== */
 .empty {
   text-align: center;
@@ -511,4 +568,7 @@ form.inline { display: inline; }
   .container { padding: 0 14px; }
   .menu-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
   .card-img { height: 130px; }
+  .profile-grid { grid-template-columns: 1fr; }
+  .nav-group-label { display: none; }
+  .nav-group-admin { border-left: none; padding-left: 0; }
 }

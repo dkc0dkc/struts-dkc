@@ -10,6 +10,7 @@ public class Product {
     private String categoryName;
     private String name;
     private String remark;
+    private String image;
     private boolean onSale = true;
     private List<ProductSpec> specs = new ArrayList<>();
 
@@ -23,6 +24,8 @@ public class Product {
     public void setName(String name) { this.name = name; }
     public String getRemark() { return remark; }
     public void setRemark(String remark) { this.remark = remark; }
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
     public boolean isOnSale() { return onSale; }
     public void setOnSale(boolean onSale) { this.onSale = onSale; }
     public List<ProductSpec> getSpecs() { return specs; }

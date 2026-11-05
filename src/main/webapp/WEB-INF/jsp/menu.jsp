@@ -45,12 +45,8 @@
                 <s:iterator value="products">
                     <tr>
                         <td>
-                            <s:set var="img" value="'default-drink.png'"/>
-                            <s:if test="id == 1"><s:set var="img" value="'pearl-milk-tea.png'"/></s:if>
-                            <s:if test="id == 2"><s:set var="img" value="'coconut-milk-tea.png'"/></s:if>
-                            <s:if test="id == 3"><s:set var="img" value="'mango-green-tea.png'"/></s:if>
-                            <s:if test="id == 4"><s:set var="img" value="'lemon-black-tea.png'"/></s:if>
-                            <s:if test="id == 5"><s:set var="img" value="'americano.png'"/></s:if>
+                            <s:set var="img" value="image"/>
+                            <s:if test="img == null || img.isEmpty()"><s:set var="img" value="'default-drink.png'"/></s:if>
                             <img class="thumb" src="${pageContext.request.contextPath}/img/${img}"
                                  alt="<s:property value='name'/>">
                         </td>

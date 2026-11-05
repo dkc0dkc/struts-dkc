@@ -48,7 +48,12 @@
                             <span class="spec">制作中，请稍候取餐</span>
                         </s:elseif>
                         <s:elseif test="status == 'COMPLETED'">
-                            <span class="spec">已完成，感谢惠顾</span>
+                            <s:if test="reviewed">
+                                <span class="spec">已评价，感谢惠顾</span>
+                            </s:if>
+                            <s:else>
+                                <a class="price-btn" href="review.action?orderId=<s:property value='id'/>">去评价</a>
+                            </s:else>
                         </s:elseif>
                         <s:else>
                             <span class="spec">已取消</span>

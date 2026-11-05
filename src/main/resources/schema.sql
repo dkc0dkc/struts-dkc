@@ -13,6 +13,24 @@ CREATE TABLE IF NOT EXISTS product (
     on_sale     BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+-- 饮品图片（相对 /img 的文件名）。兼容旧库：启动时补列并按名称映射演示图片。
+ALTER TABLE product ADD COLUMN IF NOT EXISTS image VARCHAR(100);
+UPDATE product SET image='pearl-milk-tea.png'     WHERE name='珍珠奶茶' AND (image IS NULL OR image='');
+UPDATE product SET image='coconut-milk-tea.png'   WHERE name='椰果奶茶' AND (image IS NULL OR image='');
+UPDATE product SET image='mango-green-tea.png'    WHERE name='芒果绿茶' AND (image IS NULL OR image='');
+UPDATE product SET image='lemon-black-tea.png'    WHERE name='柠檬红茶' AND (image IS NULL OR image='');
+UPDATE product SET image='americano.png'          WHERE name='美式咖啡' AND (image IS NULL OR image='');
+
+-- 订单评价：每笔已完成订单可评价一次。
+CREATE TABLE IF NOT EXISTS review (
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id    BIGINT NOT NULL,
+    member_id   BIGINT NOT NULL,
+    rating      INT NOT NULL DEFAULT 5,
+    content     VARCHAR(500),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 饮品规格（中杯/大杯…），价格挂在规格上
 CREATE TABLE IF NOT EXISTS product_spec (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,

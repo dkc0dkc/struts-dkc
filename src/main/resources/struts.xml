@@ -50,6 +50,20 @@
             <result>/WEB-INF/jsp/my-orders.jsp</result>
             <result name="needLogin" type="redirectAction">login</result>
         </action>
+        <action name="profile" class="com.tea.web.OrderAction" method="profile">
+            <result>/WEB-INF/jsp/profile.jsp</result>
+            <result name="needLogin" type="redirectAction">login</result>
+        </action>
+        <action name="review" class="com.tea.web.ReviewAction" method="form">
+            <result>/WEB-INF/jsp/review.jsp</result>
+            <result name="needLogin" type="redirectAction">login</result>
+            <result name="done" type="redirectAction">profile</result>
+        </action>
+        <action name="review-save" class="com.tea.web.ReviewAction" method="save">
+            <result name="success" type="redirectAction">profile</result>
+            <result name="needLogin" type="redirectAction">login</result>
+            <result name="input">/WEB-INF/jsp/review.jsp</result>
+        </action>
         <action name="order-create" class="com.tea.web.OrderAction" method="create"/>
         <action name="orders" class="com.tea.web.OrderAction" method="list">
             <result>/WEB-INF/jsp/orders.jsp</result>

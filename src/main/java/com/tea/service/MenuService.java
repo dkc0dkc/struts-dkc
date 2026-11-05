@@ -45,7 +45,7 @@ public class MenuService {
 
     public static List<Product> productsByCategory(long categoryId) throws SQLException {
         List<Product> list = new ArrayList<>();
-        String sql = "SELECT id, name, remark, on_sale FROM product WHERE category_id=? ORDER BY id";
+        String sql = "SELECT id, name, remark, on_sale, image FROM product WHERE category_id=? ORDER BY id";
         try (Connection c = DB.get(); PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setLong(1, categoryId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -56,6 +56,7 @@ public class MenuService {
                     p.setName(rs.getString(2));
                     p.setRemark(rs.getString(3));
                     p.setOnSale(rs.getBoolean(4));
+                    p.setImage(rs.getString(5));
                     list.add(p);
                 }
             }
@@ -66,7 +67,7 @@ public class MenuService {
 
     public static List<Product> allProducts() throws SQLException {
         List<Product> list = new ArrayList<>();
-        String sql = "SELECT p.id, p.category_id, p.name, p.remark, p.on_sale, c.name " +
+        String sql = "SELECT p.id, p.category_id, p.name, p.remark, p.on_sale, c.name, p.image " +
                 "FROM product p JOIN category c ON c.id=p.category_id ORDER BY p.id";
         try (Connection c = DB.get(); Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -78,6 +79,7 @@ public class MenuService {
                 p.setRemark(rs.getString(4));
                 p.setOnSale(rs.getBoolean(5));
                 p.setCategoryName(rs.getString(6));
+                p.setImage(rs.getString(7));
                 list.add(p);
             }
         }

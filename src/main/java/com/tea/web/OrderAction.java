@@ -7,9 +7,11 @@ import com.tea.model.Category;
 import com.tea.model.Member;
 import com.tea.model.Order;
 import com.tea.model.RedeemRule;
+import com.tea.model.Review;
 import com.tea.service.MemberService;
 import com.tea.service.MenuService;
 import com.tea.service.OrderService;
+import com.tea.service.ReviewService;
 import org.apache.struts2.ServletActionContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +38,8 @@ public class OrderAction extends ActionSupport {
     private String payMethod;       // 支付方式（模拟，页面展示用）
     private Order order;            // 支付页展示的订单
     private Member orderMember;     // 订单所属会员（积分抵扣校验用）
+    private Member profileMember;   // 个人中心：登录会员
+    private List<Review> myReviews; // 个人中心：我的评价
 
     /** 点单页。 */
     public String execute() {
@@ -131,6 +135,20 @@ public class OrderAction extends ActionSupport {
         return SUCCESS;
     }
 
+    /** 个人中心：会员信息 + 我的订单 + 我的评价。 */
+    public String profile() {
+        Long mid = LoginAction.loginMemberId();
+        if (mid == null) return "needLogin";
+        try {
+            profileMember = MemberService.getById(mid);
+            orders = OrderService.list(null, mid);
+            myReviews = ReviewService.listByMember(mid);
+        } catch (Exception e) {
+            addActionError(e.getMessage());
+        }
+        return SUCCESS;
+    }
+
     public String pay() {
         boolean userFlow = "my".equals(from);
         try {
@@ -181,4 +199,6 @@ public class OrderAction extends ActionSupport {
     public void setPayMethod(String payMethod) { this.payMethod = payMethod; }
     public Order getOrder() { return order; }
     public Member getOrderMember() { return orderMember; }
+    public Member getProfileMember() { return profileMember; }
+    public List<Review> getMyReviews() { return myReviews; }
 }
