@@ -16,28 +16,31 @@
     </s:if>
 
     <div class="panel">
-        <s:form action="menu-saveCategory" method="post" cssStyle="display:inline">
-            <s:textfield name="name" placeholder="新分类名称"/> <s:submit value="新增分类"/>
+        <div class="panel-title">新增分类</div>
+        <s:form action="menu-saveCategory" method="post" cssClass="form-row">
+            <s:textfield name="name" placeholder="例如：季节限定" cssStyle="min-width:220px"/>
+            <s:submit value="新增分类"/>
         </s:form>
     </div>
 
     <s:iterator value="categories">
-        <h3>
-            <s:property value="name"/>
-            <s:form action="menu-deleteCategory" method="post" cssStyle="display:inline">
+        <div class="cat-bar">
+            <h3><s:property value="name"/></h3>
+            <span class="cnt"><s:property value="products.size()"/> 款饮品</span>
+            <s:form action="menu-deleteCategory" method="post">
                 <s:hidden name="id" value="%{id}"/>
                 <s:submit value="删除分类" cssClass="mini"/>
             </s:form>
-        </h3>
+        </div>
 
         <div class="table-wrap">
-            <table>
+            <table class="admin-table">
                 <tr>
-                    <th style="width:70px">图片</th>
-                    <th style="width:120px">饮品</th>
-                    <th style="width:80px">状态</th>
+                    <th style="width:80px">图片</th>
+                    <th style="width:170px">饮品</th>
+                    <th style="width:90px">状态</th>
                     <th>规格与价格</th>
-                    <th style="width:340px">操作</th>
+                    <th style="width:300px">操作</th>
                 </tr>
                 <s:iterator value="products">
                     <tr>
@@ -51,30 +54,43 @@
                             <img class="thumb" src="${pageContext.request.contextPath}/img/${img}"
                                  alt="<s:property value='name'/>">
                         </td>
-                        <td><b><s:property value="name"/></b><br>
-                            <span class="spec"><s:property value="remark"/></span></td>
-                        <td><s:if test="onSale"><span class="tag COMPLETED">在售</span></s:if><s:else><span class="tag CANCELLED">已下架</span></s:else></td>
                         <td>
-                            <s:iterator value="specs">
-                                <span class="spec"><s:property value="specName"/> ¥<s:property value="price"/></span>
-                                <s:form action="menu-deleteSpec" method="post" cssStyle="display:inline">
-                                    <s:hidden name="id" value="%{id}"/>
-                                    <s:submit value="删" cssClass="mini"/>
-                                </s:form>
-                                <br>
-                            </s:iterator>
-                            <s:if test="specs.isEmpty()"><span class="spec">（暂无规格）</span></s:if>
+                            <span class="prod-name"><s:property value="name"/></span>
+                            <s:if test="remark != null && !remark.isEmpty()">
+                                <span class="spec"><s:property value="remark"/></span>
+                            </s:if>
                         </td>
                         <td>
-                            <s:form action="menu-saveSpec" method="post" cssStyle="display:inline">
-                                <s:hidden name="productId" value="%{id}"/>
-                                <s:textfield name="specName" placeholder="规格" cssStyle="width:70px"/>
-                                <s:textfield name="price" placeholder="价格" cssStyle="width:60px"/>
-                                <s:submit value="加规格" cssClass="mini"/>
-                            </s:form>
-                            <s:form action="menu-deleteProduct" method="post" cssStyle="display:inline">
+                            <s:if test="onSale"><span class="tag COMPLETED">在售</span></s:if>
+                            <s:else><span class="tag CANCELLED">已下架</span></s:else>
+                        </td>
+                        <td>
+                            <s:iterator value="specs">
+                                <div class="spec-line">
+                                    <span class="price-pill"><s:property value="specName"/> ¥<s:property value="price"/></span>
+                                    <s:form action="menu-deleteSpec" method="post" cssStyle="display:inline">
+                                        <s:hidden name="id" value="%{id}"/>
+                                        <s:submit value="删除" cssClass="mini"/>
+                                    </s:form>
+                                </div>
+                            </s:iterator>
+                            <s:if test="specs.isEmpty()">
+                                <span class="spec">（暂无规格，请先在右侧添加）</span>
+                            </s:if>
+                        </td>
+                        <td>
+                            <div class="action-box">
+                                <div class="field-label">添加规格</div>
+                                <s:form action="menu-saveSpec" method="post" cssClass="form-row">
+                                    <s:hidden name="productId" value="%{id}"/>
+                                    <s:textfield name="specName" placeholder="规格"/>
+                                    <s:textfield name="price" placeholder="价格"/>
+                                    <s:submit value="添加" cssClass="mini"/>
+                                </s:form>
+                            </div>
+                            <s:form action="menu-deleteProduct" method="post">
                                 <s:hidden name="id" value="%{id}"/>
-                                <s:submit value="删除饮品" cssClass="mini"/>
+                                <s:submit value="删除饮品" cssClass="mini danger"/>
                             </s:form>
                         </td>
                     </tr>
@@ -86,12 +102,22 @@
         </div>
 
         <div class="panel">
-            <s:form action="menu-saveProduct" method="post" cssStyle="display:inline">
+            <div class="panel-title">新增饮品到「<s:property value="name"/>」</div>
+            <s:form action="menu-saveProduct" method="post" cssClass="form-grid">
                 <s:hidden name="categoryId" value="%{id}"/>
-                <s:textfield name="name" placeholder="饮品名称"/>
-                <s:textfield name="remark" placeholder="备注（可选）"/>
-                <label><s:checkbox name="onSale" value="true"/> 上架</label>
-                <s:submit value="新增饮品"/>
+                <div>
+                    <span class="field-label">饮品名称</span>
+                    <s:textfield name="name" placeholder="例如：杨枝甘露"/>
+                </div>
+                <div>
+                    <span class="field-label">备注（可选）</span>
+                    <s:textfield name="remark" placeholder="例如：招牌 / 季节限定"/>
+                </div>
+                <div class="full">
+                    <label><s:checkbox name="onSale" value="true"/> 上架销售</label>
+                    &nbsp;&nbsp;
+                    <s:submit value="新增饮品"/>
+                </div>
             </s:form>
         </div>
     </s:iterator>

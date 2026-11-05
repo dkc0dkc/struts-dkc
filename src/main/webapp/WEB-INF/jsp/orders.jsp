@@ -16,13 +16,13 @@
         <% session.removeAttribute("flashError"); %>
     </s:if>
 
-    <div class="panel">
-        筛选：
-        <a href="orders.action">全部</a> |
-        <a href="orders.action?status=CREATED">待支付</a> |
-        <a href="orders.action?status=PAID">已支付</a> |
-        <a href="orders.action?status=COMPLETED">已完成</a> |
-        <a href="orders.action?status=CANCELLED">已取消</a>
+    <div class="panel form-row">
+        <span class="spec">筛选：</span>
+        <a class="price-btn" href="orders.action">全部</a>
+        <a class="price-btn" href="orders.action?status=CREATED">待支付</a>
+        <a class="price-btn" href="orders.action?status=PAID">已支付</a>
+        <a class="price-btn" href="orders.action?status=COMPLETED">已完成</a>
+        <a class="price-btn" href="orders.action?status=CANCELLED">已取消</a>
     </div>
 
     <div class="table-wrap">

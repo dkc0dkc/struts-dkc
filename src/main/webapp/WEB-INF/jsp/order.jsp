@@ -8,66 +8,85 @@
 <div class="hero" style="background-image:url('${pageContext.request.contextPath}/img/hero.png')">
     <div class="hero-inner">
         <h1>今日想喝点什么？</h1>
-        <p>新鲜现制 · 真茶真果 · 点击右侧规格加入购物车</p>
+        <p>新鲜现制 · 真茶真果 · 点击规格加入购物车</p>
     </div>
 </div>
 
 <div class="container">
     <div class="page-head">
         <h2>点单下单</h2>
-        <span class="sub">选择饮品规格加入购物车，支持会员积分抵扣</span>
+        <span class="sub">左侧选择分类，右侧查看饮品详情并加入购物车</span>
     </div>
 
     <s:if test="hasActionErrors()">
         <div class="error"><s:actionerror/></div>
     </s:if>
 
-    <div style="display:flex; gap:20px; align-items:flex-start;">
-        <!-- 左侧：菜单选品 -->
-        <div style="flex:2; min-width:0;">
+    <div class="shop">
+        <!-- 左：分类导航 -->
+        <aside class="cat-nav">
+            <div class="cat-title">饮品分类</div>
             <s:iterator value="categories">
-                <h3><s:property value="name"/></h3>
-                <div class="menu-grid">
-                    <s:iterator value="products">
-                        <div class="card">
-                            <div class="card-img">
-                                <s:set var="img" value="'default-drink.png'"/>
-                                <s:if test="id == 1"><s:set var="img" value="'pearl-milk-tea.png'"/></s:if>
-                                <s:if test="id == 2"><s:set var="img" value="'coconut-milk-tea.png'"/></s:if>
-                                <s:if test="id == 3"><s:set var="img" value="'mango-green-tea.png'"/></s:if>
-                                <s:if test="id == 4"><s:set var="img" value="'lemon-black-tea.png'"/></s:if>
-                                <s:if test="id == 5"><s:set var="img" value="'americano.png'"/></s:if>
-                                <img src="${pageContext.request.contextPath}/img/${img}"
-                                     alt="<s:property value='name'/>">
-                            </div>
-                            <div class="card-body">
-                                <span class="name"><s:property value="name"/></span>
-                                <s:if test="remark != null && !remark.isEmpty()">
-                                    <span class="remark"><s:property value="remark"/></span>
-                                </s:if>
-                                <div class="specs">
-                                    <s:iterator value="specs">
-                                        <button type="button" class="price-btn"
-                                                data-spec="<s:property value='id'/>"
-                                                data-label="<s:property value='../name'/>（<s:property value='specName'/>）"
-                                                data-price="<s:property value='price'/>">
-                                            <s:property value="specName"/> <b>¥<s:property value="price"/></b> ＋
-                                        </button>
-                                    </s:iterator>
-                                    <s:if test="specs.isEmpty()">
-                                        <span class="spec">暂无规格</span>
+                <a href="#cat-<s:property value='id'/>" data-target="cat-<s:property value='id'/>">
+                    <span><s:property value="name"/></span>
+                    <span class="cnt"><s:property value="products.size()"/></span>
+                </a>
+            </s:iterator>
+        </aside>
+
+        <!-- 中：饮品图文 -->
+        <main class="shop-main">
+            <s:iterator value="categories">
+                <section class="cat-section" id="cat-<s:property value='id'/>">
+                    <h3>
+                        <s:property value="name"/>
+                        <span class="line"></span>
+                    </h3>
+                    <div class="menu-grid">
+                        <s:iterator value="products">
+                            <div class="card">
+                                <div class="card-img">
+                                    <s:set var="img" value="'default-drink.png'"/>
+                                    <s:if test="id == 1"><s:set var="img" value="'pearl-milk-tea.png'"/></s:if>
+                                    <s:if test="id == 2"><s:set var="img" value="'coconut-milk-tea.png'"/></s:if>
+                                    <s:if test="id == 3"><s:set var="img" value="'mango-green-tea.png'"/></s:if>
+                                    <s:if test="id == 4"><s:set var="img" value="'lemon-black-tea.png'"/></s:if>
+                                    <s:if test="id == 5"><s:set var="img" value="'americano.png'"/></s:if>
+                                    <img src="${pageContext.request.contextPath}/img/${img}"
+                                         alt="<s:property value='name'/>">
+                                </div>
+                                <div class="card-body">
+                                    <span class="name"><s:property value="name"/></span>
+                                    <s:if test="remark != null && !remark.isEmpty()">
+                                        <span class="remark"><s:property value="remark"/></span>
                                     </s:if>
+                                    <div class="specs">
+                                        <s:iterator value="specs">
+                                            <button type="button" class="price-btn"
+                                                    data-spec="<s:property value='id'/>"
+                                                    data-label="<s:property value='../name'/>（<s:property value='specName'/>）"
+                                                    data-price="<s:property value='price'/>">
+                                                <s:property value="specName"/> <b>¥<s:property value="price"/></b> ＋
+                                            </button>
+                                        </s:iterator>
+                                        <s:if test="specs.isEmpty()">
+                                            <span class="spec">暂无规格</span>
+                                        </s:if>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </s:iterator>
-                </div>
+                        </s:iterator>
+                        <s:if test="products.isEmpty()">
+                            <div class="empty">该分类暂无饮品</div>
+                        </s:if>
+                    </div>
+                </section>
             </s:iterator>
-        </div>
+        </main>
 
-        <!-- 右侧：购物车 -->
-        <div class="panel" style="flex:1; min-width:280px; position:sticky; top:76px;">
-            <h3 style="margin-top:0">购物车</h3>
+        <!-- 右：购物车 -->
+        <aside class="cart panel">
+            <h3>购物车</h3>
             <table>
                 <thead>
                 <tr><th>品项</th><th>数量</th><th>小计</th></tr>
@@ -77,7 +96,7 @@
                 </tbody>
             </table>
             <div class="row">会员：
-                <select id="memberId">
+                <select id="memberId" style="width:100%">
                     <option value="">非会员</option>
                     <s:iterator value="members">
                         <option value="<s:property value='id'/>">
@@ -88,11 +107,12 @@
             </div>
             <div class="row">合计：<span class="total" id="total">0.00</span> 元</div>
             <button type="button" style="width:100%; margin-top:6px;" onclick="submitOrder()">提交订单</button>
-        </div>
+        </aside>
     </div>
 </div>
 
 <script>
+    /* ===== 购物车 ===== */
     var cart = {};  // specId -> {label, price, qty}
 
     var btns = document.querySelectorAll('.price-btn');
@@ -156,6 +176,33 @@
             }
         });
     }
+
+    /* ===== 分类高亮跟随滚动 ===== */
+    var catLinks = document.querySelectorAll('.cat-nav a');
+    var secs = [];
+    for (var j = 0; j < catLinks.length; j++) {
+        var s = document.getElementById(catLinks[j].getAttribute('data-target'));
+        if (s) secs.push({ link: catLinks[j], el: s });
+        (function (link) {
+            link.onclick = function () { setActive(link); };
+        })(catLinks[j]);
+    }
+
+    function setActive(link) {
+        for (var k = 0; k < catLinks.length; k++) catLinks[k].className = '';
+        link.className = 'active';
+    }
+
+    function onScroll() {
+        if (!secs.length) return;
+        var cur = secs[0];
+        for (var k = 0; k < secs.length; k++) {
+            if (secs[k].el.getBoundingClientRect().top <= 120) cur = secs[k];
+        }
+        if (cur.link.className !== 'active') setActive(cur.link);
+    }
+    window.addEventListener('scroll', onScroll);
+    onScroll();
 </script>
 
 <jsp:include page="_footer.jsp"/>

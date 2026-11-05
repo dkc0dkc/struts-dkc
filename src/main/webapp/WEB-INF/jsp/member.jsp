@@ -16,9 +16,10 @@
     </s:if>
 
     <div class="panel">
-        <s:form action="member-save" method="post" cssStyle="display:inline">
-            <s:textfield name="name" placeholder="会员姓名"/>
-            <s:textfield name="phone" placeholder="手机号"/>
+        <div class="panel-title">新增会员</div>
+        <s:form action="member-save" method="post" cssClass="form-row">
+            <s:textfield name="name" placeholder="会员姓名" cssStyle="min-width:160px"/>
+            <s:textfield name="phone" placeholder="手机号" cssStyle="min-width:160px"/>
             <s:submit value="新增会员"/>
         </s:form>
     </div>
@@ -44,7 +45,7 @@
 
     <h3>积分兑换（支付订单时也可直接选券抵扣）</h3>
     <div class="panel">
-        <s:form action="member-redeem" method="post" cssStyle="display:inline">
+        <s:form action="member-redeem" method="post" cssClass="form-row">
             <s:select name="memberId" list="members" listKey="id"
                       listValue="%{name + '（' + points + '积分）'}"
                       headerKey="" headerValue="选择会员"/>

@@ -25,13 +25,14 @@
     </s:if>
 
     <div class="panel">
-        <s:form action="stock-save" method="post" cssStyle="display:inline">
+        <div class="panel-title">新增库存条目</div>
+        <s:form action="stock-save" method="post" cssClass="form-row">
             <s:select name="productId" list="products" listKey="id" listValue="name"
                       headerKey="" headerValue="通用原料（不绑定饮品）"/>
-            <s:textfield name="name" placeholder="库存名称"/>
-            <s:textfield name="unit" placeholder="单位" cssStyle="width:60px"/>
-            <s:textfield name="quantity" placeholder="数量" cssStyle="width:60px"/>
-            <s:textfield name="threshold" placeholder="预警阈值" cssStyle="width:70px"/>
+            <s:textfield name="name" placeholder="库存名称" cssStyle="min-width:150px"/>
+            <s:textfield name="unit" placeholder="单位" cssStyle="width:70px"/>
+            <s:textfield name="quantity" placeholder="数量" cssStyle="width:70px"/>
+            <s:textfield name="threshold" placeholder="预警阈值" cssStyle="width:80px"/>
             <s:submit value="新增库存"/>
         </s:form>
     </div>
@@ -51,9 +52,9 @@
                     <td><s:property value="quantity"/></td>
                     <td><s:property value="threshold"/></td>
                     <td>
-                        <s:form action="stock-restock" method="post" cssStyle="display:inline">
+                        <s:form action="stock-restock" method="post" cssClass="form-row">
                             <s:hidden name="id" value="%{id}"/>
-                            <s:textfield name="qty" placeholder="数量" cssStyle="width:55px"/>
+                            <s:textfield name="qty" placeholder="数量" cssStyle="width:70px"/>
                             <s:submit value="补货" cssClass="mini"/>
                         </s:form>
                     </td>
