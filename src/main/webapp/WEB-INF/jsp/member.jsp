@@ -8,7 +8,7 @@
 <div class="container">
     <div class="page-head">
         <h2>会员积分</h2>
-        <span class="sub">实付 1 元 = 1 积分，积分可兑换抵扣券</span>
+        <span class="sub">实付 1 元 = 1 积分，可在会员列表手工加分 / 扣分，也可兑换抵扣券</span>
     </div>
 
     <s:if test="hasActionErrors()">
@@ -27,7 +27,7 @@
     <h3>会员列表</h3>
     <div class="table-wrap">
         <table>
-            <tr><th>ID</th><th>姓名</th><th>手机号</th><th>当前积分</th><th>注册时间</th></tr>
+            <tr><th>ID</th><th>姓名</th><th>手机号</th><th>当前积分</th><th>注册时间</th><th style="width:330px">积分调整</th></tr>
             <s:iterator value="members">
                 <tr>
                     <td><s:property value="id"/></td>
@@ -35,10 +35,22 @@
                     <td><s:property value="phone"/></td>
                     <td><span class="tag CREATED"><s:property value="points"/> 分</span></td>
                     <td><s:date name="createdAt" format="yyyy-MM-dd"/></td>
+                    <td>
+                        <s:form action="member-adjustPoints" method="post" cssClass="form-row adjust-form">
+                            <s:hidden name="memberId" value="%{id}"/>
+                            <select name="adjustType">
+                                <option value="ADD">增加</option>
+                                <option value="SUB">扣减</option>
+                            </select>
+                            <s:textfield name="points" placeholder="积分数" cssStyle="width:80px"/>
+                            <s:textfield name="remark" placeholder="原因（可选）" cssStyle="width:110px"/>
+                            <s:submit value="确认" cssClass="mini"/>
+                        </s:form>
+                    </td>
                 </tr>
             </s:iterator>
             <s:if test="members == null || members.isEmpty()">
-                <tr><td colspan="5" class="empty">暂无会员</td></tr>
+                <tr><td colspan="6" class="empty">暂无会员</td></tr>
             </s:if>
         </table>
     </div>

@@ -23,6 +23,9 @@ public class MemberAction extends ActionSupport {
     private String phone;
     private Long memberId;
     private Long ruleId;
+    private Integer points;        // 积分调整数量（正数）
+    private String adjustType;     // ADD 加分 / SUB 扣分
+    private String remark;         // 调整原因
 
     public String execute() {
         return load();
@@ -63,6 +66,22 @@ public class MemberAction extends ActionSupport {
         }
     }
 
+    /** 手工增加 / 扣减会员积分。 */
+    public String adjustPoints() {
+        try {
+            if (memberId == null || memberId <= 0) throw new IllegalArgumentException("请选择会员");
+            if (points == null || points <= 0) throw new IllegalArgumentException("请输入大于 0 的积分数量");
+            int delta = "SUB".equals(adjustType) ? -points : points;
+            MemberService.adjustPoints(memberId, delta, remark);
+            return SUCCESS;
+        } catch (Exception e) {
+            addActionError("积分调整失败: " + e.getMessage());
+            memberId = null;   // 避免流水被过滤成单个会员
+            load();
+            return INPUT;
+        }
+    }
+
     // ===== getter / setter =====
     public List<Member> getMembers() { return members; }
     public List<RedeemRule> getRules() { return rules; }
@@ -77,4 +96,10 @@ public class MemberAction extends ActionSupport {
     public void setMemberId(Long memberId) { this.memberId = memberId; }
     public Long getRuleId() { return ruleId; }
     public void setRuleId(Long ruleId) { this.ruleId = ruleId; }
+    public Integer getPoints() { return points; }
+    public void setPoints(Integer points) { this.points = points; }
+    public String getAdjustType() { return adjustType; }
+    public void setAdjustType(String adjustType) { this.adjustType = adjustType; }
+    public String getRemark() { return remark; }
+    public void setRemark(String remark) { this.remark = remark; }
 }

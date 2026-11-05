@@ -89,6 +89,43 @@ public class MemberService {
         }
     }
 
+    /**
+     * 手工调整会员积分：delta 为正表示加分，为负表示扣分；扣分不能超过当前余额。
+     * 调整结果同时写入积分流水，便于审计。
+     */
+    public static void adjustPoints(long memberId, int delta, String remark) throws SQLException {
+        if (memberId <= 0) throw new IllegalArgumentException("请选择会员");
+        if (delta == 0) throw new IllegalArgumentException("积分变动数量不能为 0");
+        try (Connection c = DB.get()) {
+            c.setAutoCommit(false);
+            try {
+                int current;
+                try (PreparedStatement ps = c.prepareStatement("SELECT points FROM member WHERE id=? FOR UPDATE")) {
+                    ps.setLong(1, memberId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) throw new IllegalArgumentException("会员不存在");
+                        current = rs.getInt(1);
+                    }
+                }
+                int after = current + delta;
+                if (after < 0)
+                    throw new IllegalArgumentException("积分不足：当前 " + current + " 分，无法扣减 " + (-delta) + " 分");
+                try (PreparedStatement ps = c.prepareStatement("UPDATE member SET points=? WHERE id=?")) {
+                    ps.setInt(1, after);
+                    ps.setLong(2, memberId);
+                    ps.executeUpdate();
+                }
+                String note = (remark == null || remark.trim().isEmpty())
+                        ? (delta > 0 ? "手工加分" : "手工扣分") : remark.trim();
+                insertLog(c, memberId, null, delta > 0 ? "EARN" : "REDEEM", delta, note);
+                c.commit();
+            } catch (Exception e) {
+                c.rollback();
+                throw e;
+            }
+        }
+    }
+
     public static List<PointLog> logs(Long memberId) throws SQLException {
         List<PointLog> list = new ArrayList<>();
         String sql = "SELECT l.id, l.member_id, m.name, l.order_id, l.log_type, l.points, l.remark, l.created_at " +

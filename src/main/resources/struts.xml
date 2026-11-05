@@ -69,6 +69,10 @@
             <result name="success" type="redirectAction">member</result>
             <result name="input">/WEB-INF/jsp/member.jsp</result>
         </action>
+        <action name="member-adjustPoints" class="com.tea.web.MemberAction" method="adjustPoints">
+            <result name="success" type="redirectAction">member</result>
+            <result name="input">/WEB-INF/jsp/member.jsp</result>
+        </action>
         <action name="member-redeem" class="com.tea.web.MemberAction" method="redeem">
             <result name="success" type="redirectAction">member</result>
             <result name="input">/WEB-INF/jsp/member.jsp</result>

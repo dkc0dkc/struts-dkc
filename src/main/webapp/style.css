@@ -398,8 +398,10 @@ form.inline { display: inline; }
   margin-bottom: 8px;
   background: #fdfaf6;
 }
-.action-box .form-row input { max-width: 84px; }
-.action-box .form-row input:first-child { max-width: 72px; }
+.action-box .form-row input { max-width: none; }
+.action-box .form-row select { max-width: 130px; }
+.adjust-form select { width: 78px; }
+.admin-table .form-row { gap: 6px; }
 
 /* ========== 空状态 ========== */
 .empty {

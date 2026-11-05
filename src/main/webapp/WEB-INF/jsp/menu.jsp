@@ -80,11 +80,18 @@
                         </td>
                         <td>
                             <div class="action-box">
-                                <div class="field-label">添加规格</div>
+                                <div class="field-label">添加规格（价格单位：元）</div>
                                 <s:form action="menu-saveSpec" method="post" cssClass="form-row">
                                     <s:hidden name="productId" value="%{id}"/>
-                                    <s:textfield name="specName" placeholder="规格"/>
-                                    <s:textfield name="price" placeholder="价格"/>
+                                    <select name="specName" title="选择杯型">
+                                        <option value="小杯">小杯</option>
+                                        <option value="中杯" selected>中杯</option>
+                                        <option value="大杯">大杯</option>
+                                        <option value="超大杯">超大杯</option>
+                                        <option value="标准">标准（不分杯型）</option>
+                                    </select>
+                                    <input type="number" name="price" step="0.01" min="0"
+                                           placeholder="价格，如 12.00" style="width:120px" title="价格（元）">
                                     <s:submit value="添加" cssClass="mini"/>
                                 </s:form>
                             </div>
