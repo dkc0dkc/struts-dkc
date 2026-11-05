@@ -43,6 +43,12 @@ INSERT INTO admin_user(username, password)
 SELECT 'admin', 'a238d2f5881356ead79d622ac396524bed36a6d727a1cae1e64af72eef00578d'
  WHERE NOT EXISTS (SELECT 1 FROM admin_user WHERE username='admin');
 
+-- 种子数据版本标记（用于旧库自动升级演示菜单，导入后由 DB.init 写入）
+CREATE TABLE IF NOT EXISTS meta (
+    k VARCHAR(50) PRIMARY KEY,
+    v VARCHAR(100)
+);
+
 -- 饮品规格（中杯/大杯…），价格挂在规格上
 CREATE TABLE IF NOT EXISTS product_spec (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,

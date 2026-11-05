@@ -30,17 +30,23 @@ public final class DB {
         try (Connection c = get(); Statement st = c.createStatement()) {
             st.execute(readResource("/schema.sql"));
         }
-        // 菜单：空库，或检测到旧版演示菜单（缺少“杨枝甘露”）时，清空旧菜单重新导入（自动升级旧库）
-        boolean menuEmpty = scalar("SELECT COUNT(*) FROM category") == 0;
-        boolean hasNewMenu = scalar("SELECT COUNT(*) FROM product WHERE name='杨枝甘露'") > 0;
-        if (menuEmpty || !hasNewMenu) {
+        // 菜单：meta 表未标记种子版本（空库或旧版菜单）时，清空重建（自动升级旧库）。
+        // 重建前重置自增 ID，保证 menu.sql 中硬编码的 product_id / category_id 对得上。
+        if (!"v2".equals(scalarStr("SELECT v FROM meta WHERE k='menu'"))) {
             try (Connection c = get(); Statement st = c.createStatement()) {
                 st.execute("DELETE FROM product_spec");
                 st.execute("DELETE FROM stock");
                 st.execute("DELETE FROM product");
                 st.execute("DELETE FROM category");
+                st.execute("ALTER TABLE category ALTER COLUMN id RESTART WITH 1");
+                st.execute("ALTER TABLE product ALTER COLUMN id RESTART WITH 1");
+                st.execute("ALTER TABLE product_spec ALTER COLUMN id RESTART WITH 1");
+                st.execute("ALTER TABLE stock ALTER COLUMN id RESTART WITH 1");
             }
             execSql(readResource("/menu.sql"));
+            try (Connection c = get(); Statement st = c.createStatement()) {
+                st.execute("MERGE INTO meta(k, v) KEY(k) VALUES ('menu', 'v2')");
+            }
         }
         // 会员与兑换规则：仅空表时导入
         if (scalar("SELECT COUNT(*) FROM member") == 0) {
@@ -52,6 +58,12 @@ public final class DB {
         try (Connection c = get(); Statement st = c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             rs.next();
             return rs.getLong(1);
+        }
+    }
+
+    private static String scalarStr(String sql) throws SQLException {
+        try (Connection c = get(); Statement st = c.createStatement(); ResultSet rs = st.executeQuery(sql)) {
+            return rs.next() ? rs.getString(1) : null;
         }
     }
 
