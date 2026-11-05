@@ -28,6 +28,8 @@ public class MemberAction extends ActionSupport {
     private String remark;         // 调整原因
 
     public String execute() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         return load();
     }
 
@@ -43,6 +45,8 @@ public class MemberAction extends ActionSupport {
     }
 
     public String save() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             MemberService.save(id, name, phone);
             return SUCCESS;
@@ -54,6 +58,8 @@ public class MemberAction extends ActionSupport {
     }
 
     public String redeem() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             if (memberId == null || memberId <= 0) throw new IllegalArgumentException("请选择会员");
             if (ruleId == null || ruleId <= 0) throw new IllegalArgumentException("请选择兑换规则");
@@ -68,6 +74,8 @@ public class MemberAction extends ActionSupport {
 
     /** 手工增加 / 扣减会员积分。 */
     public String adjustPoints() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             if (memberId == null || memberId <= 0) throw new IllegalArgumentException("请选择会员");
             if (points == null || points <= 0) throw new IllegalArgumentException("请输入大于 0 的积分数量");

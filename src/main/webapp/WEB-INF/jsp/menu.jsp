@@ -45,8 +45,7 @@
                 <s:iterator value="products">
                     <tr>
                         <td>
-                            <s:set var="img" value="image"/>
-                            <s:if test="img == null || img.isEmpty()"><s:set var="img" value="'default-drink.png'"/></s:if>
+                            <s:set var="img" value="image == null || image.isEmpty() ? 'default-drink.png' : image" scope="page"/>
                             <img class="thumb" src="${pageContext.request.contextPath}/img/${img}"
                                  alt="<s:property value='name'/>">
                         </td>

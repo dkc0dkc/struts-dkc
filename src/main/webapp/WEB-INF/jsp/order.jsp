@@ -46,8 +46,7 @@
                         <s:iterator value="products">
                             <div class="card">
                                 <div class="card-img">
-                                    <s:set var="img" value="image"/>
-                                    <s:if test="img == null || img.isEmpty()"><s:set var="img" value="'default-drink.png'"/></s:if>
+                                    <s:set var="img" value="image == null || image.isEmpty() ? 'default-drink.png' : image" scope="page"/>
                                     <img src="${pageContext.request.contextPath}/img/${img}"
                                          alt="<s:property value='name'/>">
                                 </div>
@@ -177,7 +176,7 @@
             if (data.ok) {
                 if (data.warnings && data.warnings.length) alert(data.warnings.join('\n'));
                 // 下单成功 → 进入支付页
-                location.href = '${pageContext.request.contextPath}/pay.action?orderId=' + data.orderId;
+                location.href = '${pageContext.request.contextPath}/pay.action?id=' + data.orderId;
             } else {
                 alert('下单失败: ' + (data.message || '未知错误'));
             }

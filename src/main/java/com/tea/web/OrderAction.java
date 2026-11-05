@@ -98,8 +98,10 @@ public class OrderAction extends ActionSupport {
         return null;  // 已直接写出响应
     }
 
-    /** 订单列表页。 */
+    /** 订单列表页（管理端）。 */
     public String list() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             orders = OrderService.list(status);
             rules = MemberService.rules();
@@ -162,6 +164,8 @@ public class OrderAction extends ActionSupport {
     }
 
     public String complete() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             OrderService.complete(id);
         } catch (Exception e) {

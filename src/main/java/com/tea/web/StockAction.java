@@ -26,6 +26,8 @@ public class StockAction extends ActionSupport {
     private Integer qty;
 
     public String execute() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         return load();
     }
 
@@ -41,6 +43,8 @@ public class StockAction extends ActionSupport {
     }
 
     public String save() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             StockService.save(id, productId, name, unit,
                     quantity == null ? 0 : quantity, threshold == null ? 10 : threshold);
@@ -53,6 +57,8 @@ public class StockAction extends ActionSupport {
     }
 
     public String restock() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             if (id == null) throw new IllegalArgumentException("参数缺失");
             StockService.restock(id, qty == null ? 0 : qty);

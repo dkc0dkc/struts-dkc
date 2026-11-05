@@ -23,6 +23,8 @@ public class MenuAction extends ActionSupport {
     private BigDecimal price;
 
     public String execute() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         return load();
     }
 
@@ -36,6 +38,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String saveCategory() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             MenuService.saveCategory(id, name);
             return SUCCESS;
@@ -47,6 +51,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String deleteCategory() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             MenuService.deleteCategory(id);
             return SUCCESS;
@@ -58,6 +64,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String saveProduct() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             if (categoryId == null || categoryId <= 0) throw new IllegalArgumentException("请选择分类");
             MenuService.saveProduct(id, categoryId, name, remark, onSale == null || onSale);
@@ -70,6 +78,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String deleteProduct() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             MenuService.deleteProduct(id);
             return SUCCESS;
@@ -81,6 +91,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String saveSpec() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             if (productId == null || productId <= 0) throw new IllegalArgumentException("参数缺失: productId");
             MenuService.saveSpec(id, productId, specName, price);
@@ -93,6 +105,8 @@ public class MenuAction extends ActionSupport {
     }
 
     public String deleteSpec() {
+        String na = LoginAction.requireAdmin();
+        if (na != null) return na;
         try {
             MenuService.deleteSpec(id);
             return SUCCESS;

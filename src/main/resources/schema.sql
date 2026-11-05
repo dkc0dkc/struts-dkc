@@ -31,6 +31,18 @@ CREATE TABLE IF NOT EXISTS review (
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 管理员账号（管理端登录用）
+CREATE TABLE IF NOT EXISTS admin_user (
+    id       BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL
+);
+
+-- 默认管理员 admin / admin123（SHA-256 加盐，幂等：不存在才插入）
+INSERT INTO admin_user(username, password)
+SELECT 'admin', 'a238d2f5881356ead79d622ac396524bed36a6d727a1cae1e64af72eef00578d'
+ WHERE NOT EXISTS (SELECT 1 FROM admin_user WHERE username='admin');
+
 -- 饮品规格（中杯/大杯…），价格挂在规格上
 CREATE TABLE IF NOT EXISTS product_spec (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,

@@ -115,6 +115,18 @@ public class MemberService {
         }
     }
 
+    /** 管理员登录校验（admin_user 表）。 */
+    public static boolean adminLogin(String username, String password) throws SQLException {
+        if (username == null || username.trim().isEmpty() || password == null || password.isEmpty()) return false;
+        try (Connection c = DB.get();
+             PreparedStatement ps = c.prepareStatement("SELECT password FROM admin_user WHERE username=?")) {
+            ps.setString(1, username.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() && hash(password).equals(rs.getString(1));
+            }
+        }
+    }
+
     private static boolean exists(Integer excludeId, String phone) throws SQLException {
         String sql = "SELECT COUNT(*) FROM member WHERE phone=?" + (excludeId == null ? "" : " AND id<>?");
         try (Connection c = DB.get(); PreparedStatement ps = c.prepareStatement(sql)) {

@@ -15,6 +15,7 @@ public class LoginAction extends ActionSupport {
     private String name;
     private String phone;
     private String password;
+    private String username;         // 管理员登录
 
     /** 登录 / 注册页。 */
     public String execute() {
@@ -50,7 +51,23 @@ public class LoginAction extends ActionSupport {
         }
     }
 
-    /** 退出登录。 */
+    /** 管理员登录提交。 */
+    public String doAdminLogin() {
+        try {
+            if (MemberService.adminLogin(username, password)) {
+                ServletActionContext.getRequest().getSession(true)
+                        .setAttribute("loginAdminName", username);
+                return SUCCESS;
+            }
+            addActionError("管理员账号或密码错误");
+            return INPUT;
+        } catch (Exception e) {
+            addActionError("管理员登录失败: " + e.getMessage());
+            return INPUT;
+        }
+    }
+
+    /** 退出登录（用户 / 管理员通用）。 */
     public String logout() {
         HttpSession session = ServletActionContext.getRequest().getSession(false);
         if (session != null) session.invalidate();
@@ -69,6 +86,23 @@ public class LoginAction extends ActionSupport {
         return session == null ? null : (Long) session.getAttribute("loginMemberId");
     }
 
+    /** 当前是否管理员登录。 */
+    public static boolean isAdmin() {
+        HttpSession session = ServletActionContext.getRequest().getSession(false);
+        return session != null && session.getAttribute("loginAdminName") != null;
+    }
+
+    /**
+     * 管理端页面守卫：未以管理员身份登录时写入提示并返回 "needAdmin" 结果名；
+     * 已登录返回 null（放行）。
+     */
+    public static String requireAdmin() {
+        if (isAdmin()) return null;
+        ServletActionContext.getRequest().getSession(true)
+                .setAttribute("flashError", "请先使用管理员账号登录管理端");
+        return "needAdmin";
+    }
+
     // ===== getter / setter =====
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
@@ -76,4 +110,6 @@ public class LoginAction extends ActionSupport {
     public void setPhone(String phone) { this.phone = phone; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 }
