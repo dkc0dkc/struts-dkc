@@ -1,21 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>库存管理 - 奶茶店</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
-</head>
-<body>
-<div class="nav">
-    <a href="menu.action">菜单管理</a>
-    <a href="order.action">点单下单</a>
-    <a href="orders.action">订单列表</a>
-    <a href="member.action">会员积分</a>
-    <a href="stock.action" class="active">库存管理</a>
-</div>
+<jsp:include page="_header.jsp">
+    <jsp:param name="title" value="库存管理"/>
+    <jsp:param name="active" value="stock"/>
+</jsp:include>
+
 <div class="container">
-    <h2>库存管理</h2>
+    <div class="page-head">
+        <h2>库存管理</h2>
+        <span class="sub">原料库存与预警，低于阈值的条目会高亮提示</span>
+    </div>
 
     <s:if test="hasActionErrors()">
         <div class="error"><s:actionerror/></div>
@@ -42,29 +36,34 @@
         </s:form>
     </div>
 
-    <table>
-        <tr>
-            <th>ID</th><th>绑定饮品</th><th>名称</th><th>单位</th>
-            <th>当前数量</th><th>预警阈值</th><th style="width:180px">补货</th>
-        </tr>
-        <s:iterator value="stocks">
-            <tr <s:if test="quantity < threshold">class="low"</s:if>>
-                <td><s:property value="id"/></td>
-                <td><s:if test="productId != null"><s:property value="productName"/></s:if><s:else>通用原料</s:else></td>
-                <td><s:property value="name"/></td>
-                <td><s:property value="unit"/></td>
-                <td><b><s:property value="quantity"/></b></td>
-                <td><s:property value="threshold"/></td>
-                <td>
-                    <s:form action="stock-restock" method="post" cssStyle="display:inline">
-                        <s:hidden name="id" value="%{id}"/>
-                        <s:textfield name="qty" placeholder="数量" cssStyle="width:55px"/>
-                        <s:submit value="补货" cssClass="mini"/>
-                    </s:form>
-                </td>
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>ID</th><th>绑定饮品</th><th>名称</th><th>单位</th>
+                <th>当前数量</th><th>预警阈值</th><th style="width:180px">补货</th>
             </tr>
-        </s:iterator>
-    </table>
+            <s:iterator value="stocks">
+                <tr <s:if test="quantity < threshold">class="low"</s:if>>
+                    <td><s:property value="id"/></td>
+                    <td><s:if test="productId != null"><s:property value="productName"/></s:if><s:else>通用原料</s:else></td>
+                    <td><b><s:property value="name"/></b></td>
+                    <td><s:property value="unit"/></td>
+                    <td><s:property value="quantity"/></td>
+                    <td><s:property value="threshold"/></td>
+                    <td>
+                        <s:form action="stock-restock" method="post" cssStyle="display:inline">
+                            <s:hidden name="id" value="%{id}"/>
+                            <s:textfield name="qty" placeholder="数量" cssStyle="width:55px"/>
+                            <s:submit value="补货" cssClass="mini"/>
+                        </s:form>
+                    </td>
+                </tr>
+            </s:iterator>
+            <s:if test="stocks == null || stocks.isEmpty()">
+                <tr><td colspan="7" class="empty">暂无库存记录</td></tr>
+            </s:if>
+        </table>
+    </div>
 </div>
-</body>
-</html>
+
+<jsp:include page="_footer.jsp"/>

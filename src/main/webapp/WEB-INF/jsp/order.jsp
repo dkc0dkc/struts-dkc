@@ -1,21 +1,22 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>点单下单 - 奶茶店</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/style.css">
-</head>
-<body>
-<div class="nav">
-    <a href="menu.action">菜单管理</a>
-    <a href="order.action" class="active">点单下单</a>
-    <a href="orders.action">订单列表</a>
-    <a href="member.action">会员积分</a>
-    <a href="stock.action">库存管理</a>
+<jsp:include page="_header.jsp">
+    <jsp:param name="title" value="点单下单"/>
+    <jsp:param name="active" value="order"/>
+</jsp:include>
+
+<div class="hero" style="background-image:url('${pageContext.request.contextPath}/img/hero.png')">
+    <div class="hero-inner">
+        <h1>今日想喝点什么？</h1>
+        <p>新鲜现制 · 真茶真果 · 点击右侧规格加入购物车</p>
+    </div>
 </div>
+
 <div class="container">
-    <h2>点单下单</h2>
+    <div class="page-head">
+        <h2>点单下单</h2>
+        <span class="sub">选择饮品规格加入购物车，支持会员积分抵扣</span>
+    </div>
 
     <s:if test="hasActionErrors()">
         <div class="error"><s:actionerror/></div>
@@ -23,35 +24,56 @@
 
     <div style="display:flex; gap:20px; align-items:flex-start;">
         <!-- 左侧：菜单选品 -->
-        <div style="flex:2">
+        <div style="flex:2; min-width:0;">
             <s:iterator value="categories">
                 <h3><s:property value="name"/></h3>
-                <s:iterator value="products">
-                    <div class="panel">
-                        <b><s:property value="name"/></b>
-                        <span class="spec"><s:property value="remark"/></span><br>
-                        <s:iterator value="specs">
-                            <button type="button" class="add"
-                                    data-spec="<s:property value='id'/>"
-                                    data-label="<s:property value='../name'/>（<s:property value='specName'/>）"
-                                    data-price="<s:property value='price'/>">
-                                <s:property value="specName"/> ¥<s:property value="price"/> ＋
-                            </button>
-                        </s:iterator>
-                    </div>
-                </s:iterator>
+                <div class="menu-grid">
+                    <s:iterator value="products">
+                        <div class="card">
+                            <div class="card-img">
+                                <s:set var="img" value="'default-drink.png'"/>
+                                <s:if test="id == 1"><s:set var="img" value="'pearl-milk-tea.png'"/></s:if>
+                                <s:if test="id == 2"><s:set var="img" value="'coconut-milk-tea.png'"/></s:if>
+                                <s:if test="id == 3"><s:set var="img" value="'mango-green-tea.png'"/></s:if>
+                                <s:if test="id == 4"><s:set var="img" value="'lemon-black-tea.png'"/></s:if>
+                                <s:if test="id == 5"><s:set var="img" value="'americano.png'"/></s:if>
+                                <img src="${pageContext.request.contextPath}/img/${img}"
+                                     alt="<s:property value='name'/>">
+                            </div>
+                            <div class="card-body">
+                                <span class="name"><s:property value="name"/></span>
+                                <s:if test="remark != null && !remark.isEmpty()">
+                                    <span class="remark"><s:property value="remark"/></span>
+                                </s:if>
+                                <div class="specs">
+                                    <s:iterator value="specs">
+                                        <button type="button" class="price-btn"
+                                                data-spec="<s:property value='id'/>"
+                                                data-label="<s:property value='../name'/>（<s:property value='specName'/>）"
+                                                data-price="<s:property value='price'/>">
+                                            <s:property value="specName"/> <b>¥<s:property value="price"/></b> ＋
+                                        </button>
+                                    </s:iterator>
+                                    <s:if test="specs.isEmpty()">
+                                        <span class="spec">暂无规格</span>
+                                    </s:if>
+                                </div>
+                            </div>
+                        </div>
+                    </s:iterator>
+                </div>
             </s:iterator>
         </div>
 
         <!-- 右侧：购物车 -->
-        <div class="panel" style="flex:1; position:sticky; top:10px;">
+        <div class="panel" style="flex:1; min-width:280px; position:sticky; top:76px;">
             <h3 style="margin-top:0">购物车</h3>
             <table>
                 <thead>
                 <tr><th>品项</th><th>数量</th><th>小计</th></tr>
                 </thead>
                 <tbody id="cartBody">
-                <tr><td colspan="3" class="spec">尚未选择饮品</td></tr>
+                <tr><td colspan="3" class="empty">尚未选择饮品</td></tr>
                 </tbody>
             </table>
             <div class="row">会员：
@@ -65,7 +87,7 @@
                 </select>
             </div>
             <div class="row">合计：<span class="total" id="total">0.00</span> 元</div>
-            <button type="button" onclick="submitOrder()">提交订单</button>
+            <button type="button" style="width:100%; margin-top:6px;" onclick="submitOrder()">提交订单</button>
         </div>
     </div>
 </div>
@@ -73,7 +95,7 @@
 <script>
     var cart = {};  // specId -> {label, price, qty}
 
-    var btns = document.querySelectorAll('.add');
+    var btns = document.querySelectorAll('.price-btn');
     for (var i = 0; i < btns.length; i++) {
         (function (b) {
             b.onclick = function () {
@@ -109,7 +131,7 @@
                 '<td>' + (it.price * it.qty).toFixed(2) + '</td>';
             tb.appendChild(tr);
         }
-        if (empty) tb.innerHTML = '<tr><td colspan="3" class="spec">尚未选择饮品</td></tr>';
+        if (empty) tb.innerHTML = '<tr><td colspan="3" class="empty">尚未选择饮品</td></tr>';
         document.getElementById('total').textContent = total.toFixed(2);
     }
 
@@ -135,5 +157,5 @@
         });
     }
 </script>
-</body>
-</html>
+
+<jsp:include page="_footer.jsp"/>
